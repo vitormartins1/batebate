@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+	<Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+	<Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+	<ProductVersion>10.0.20506</ProductVersion>
+	<SchemaVersion>2.0</SchemaVersion>
+	<ProjectGuid>{4E175F22-652F-85B8-02AB-8B5C730A662E}</ProjectGuid>
+	<OutputType>Library</OutputType>
+	<AppDesignerFolder>Properties</AppDesignerFolder>
+	<RootNamespace></RootNamespace>
+	<AssemblyName>Assembly-CSharp</AssemblyName>
+	<TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+	<FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+	<DebugSymbols>true</DebugSymbols>
+	<DebugType>full</DebugType>
+	<Optimize>false</Optimize>
+	<OutputPath>Temp\bin\Debug\</OutputPath>
+	<DefineConstants>DEBUG;TRACE;UNITY_STANDALONE_OSX;ENABLE_MICROPHONE;ENABLE_IMAGEEFFECTS;ENABLE_WEBCAM;ENABLE_AUDIO_FMOD;UNITY_STANDALONE;ENABLE_NETWORK;ENABLE_MONO;ENABLE_PHYSICS;ENABLE_TERRAIN;ENABLE_CACHING;ENABLE_SUBSTANCE;ENABLE_GENERICS;ENABLE_CLOTH;ENABLE_GAMECENTER;ENABLE_MOVIES;ENABLE_AUDIO;ENABLE_WWW;ENABLE_SHADOWS;ENABLE_DUCK_TYPING;UNITY_4_1_3;UNITY_4_1;ENABLE_PROFILER;UNITY_EDITOR</DefineConstants>
+	<ErrorReport>prompt</ErrorReport>
+	<WarningLevel>4</WarningLevel>
+	<NoWarn>0169</NoWarn>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+	<DebugType>pdbonly</DebugType>
+	<Optimize>true</Optimize>
+	<OutputPath>Temp\bin\Release\</OutputPath>
+	<DefineConstants>TRACE</DefineConstants>
+	<ErrorReport>prompt</ErrorReport>
+	<WarningLevel>4</WarningLevel>
+	<NoWarn>0169</NoWarn>
+  </PropertyGroup>
+  <ItemGroup>
+	<Reference Include="System" />
+    <Reference Include="System.XML" />
+	<Reference Include="System.Core" />
+	<Reference Include="UnityEngine">
+	  <HintPath>/Applications/Unity/Unity.app/Contents/Frameworks/Managed/UnityEngine.dll</HintPath>
+	</Reference>
+	<Reference Include="UnityEditor">
+	  <HintPath>/Applications/Unity/Unity.app/Contents/Frameworks/Managed/UnityEditor.dll</HintPath>
+	</Reference>
+  </ItemGroup>
+  <ItemGroup>
+     <Compile Include="Assets\Scripts\Antiroll_Bar.cs" />
+     <Compile Include="Assets\Scripts\BumperCar.cs" />
+     <Compile Include="Assets\Scripts\BumperCar1.cs" />
+     <Compile Include="Assets\Scripts\BumperCar2.cs" />
+     <Compile Include="Assets\Scripts\BumperCar3.cs" />
+     <Compile Include="Assets\Scripts\BumperCar4.cs" />
+     <Compile Include="Assets\Scripts\BumperCarBase.cs" />
+     <Compile Include="Assets\Scripts\BumperCarIA.cs" />
+     <Compile Include="Assets\Scripts\BumperCarMuzzley.cs" />
+     <Compile Include="Assets\Scripts\BumperCarsManager.cs" />
+     <Compile Include="Assets\Scripts\Buttons\CameraFollow2.cs" />
+     <Compile Include="Assets\Scripts\Buttons\CreditosButton.cs" />
+     <Compile Include="Assets\Scripts\Buttons\FourPlayerButton.cs" />
+     <Compile Include="Assets\Scripts\Buttons\InstructionsButton.cs" />
+     <Compile Include="Assets\Scripts\Buttons\MuzzleyButton.cs" />
+     <Compile Include="Assets\Scripts\Buttons\OnePlayerButton.cs" />
+     <Compile Include="Assets\Scripts\Buttons\TwoPlayerButton.cs" />
+     <Compile Include="Assets\Scripts\Buttons\VoltarButton.cs" />
+     <Compile Include="Assets\Scripts\Coin.cs" />
+     <Compile Include="Assets\Scripts\CoinManager.cs" />
+     <Compile Include="Assets\Scripts\ColliderCollisionType.cs" />
+     <Compile Include="Assets\Scripts\CollidersManager.cs" />
+     <Compile Include="Assets\Scripts\GameManager.cs" />
+     <Compile Include="Assets\Scripts\InterfaceSalaMuzzley.cs" />
+     <Compile Include="Assets\Scripts\MuzzleyManager.cs" />
+     <Compile Include="Assets\Scripts\PowerUp.cs" />
+     <Compile Include="Assets\Scripts\PowerUpManager.cs" />
+     <Compile Include="Assets\Scripts\SimpleVelocityLimiter.cs" />
+     <Compile Include="Assets\Scripts\UsuarioHudMuzzley.cs" />
+     <Compile Include="Assets\Scripts\Utilities\CameraFollow.cs" />
+     <Compile Include="Assets\Scripts\Utilities\ResizeGUIText.cs" />
+     <Compile Include="Assets\Scripts\Utilities\ResizeGUITexture.cs" />
+     <Compile Include="Assets\Scripts\Utilities\ResizeGUITextureByCamera.cs" />
+     <Compile Include="Assets\Scripts\WheelAlignScript.cs" />
+     <None Include="Assets\Standard Assets\Toon Shading\Sources\Shaders\Toony-Basic.shader" />
+     <None Include="Assets\Libs\Newtonsoft.Json.xml" />
+     <None Include="Assets\Standard Assets\Skyboxes\_skybox info.txt" />
+     <None Include="Assets\Standard Assets\Toon Shading\Sources\Shaders\Toony-BasicOutline.shader" />
+     <None Include="Assets\Standard Assets\Toon Shading\Sources\Shaders\Toony-LightedOutline.shader" />
+     <None Include="Assets\Standard Assets\Toon Shading\Sources\Shaders\Toony-Lighted.shader" />
+ <Reference Include="Assets\Libs\Muzzley.Net">
+ <HintPath>Assets\Libs\Muzzley.Net.dll</HintPath>
+ </Reference>
+ <Reference Include="Assets\Libs\Newtonsoft.Json">
+ <HintPath>Assets\Libs\Newtonsoft.Json.dll</HintPath>
+ </Reference>
+ <Reference Include="Assets\Libs\WebSocket4Net">
+ <HintPath>Assets\Libs\WebSocket4Net.dll</HintPath>
+ </Reference>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+	   Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+  
+</Project>

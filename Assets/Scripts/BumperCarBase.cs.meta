@@ -1,0 +1,18 @@
+fileFormatVersion: 2
+guid: 423e81faed6aa4361872256de99855e7
+MonoImporter:
+  serializedVersion: 2
+  defaultReferences:
+  - FrontLeftWheel: {instanceID: 0}
+  - FrontRightWheel: {instanceID: 0}
+  - volante: {instanceID: 0}
+  - lentoImg: {instanceID: 0}
+  - invisivelImg: {fileID: 2800000, guid: 00e95c5823529488fb410d300b93ddc4, type: 3}
+  - turboImg: {instanceID: 0}
+  - escudoImg: {instanceID: 0}
+  - coletorImg: {instanceID: 0}
+  - puHud: {instanceID: 0}
+  - puTime: {instanceID: 0}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 

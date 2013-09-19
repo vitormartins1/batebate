@@ -1,0 +1,31 @@
+﻿<Properties>
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/Scripts/UsuarioHudMuzzley.cs">
+    <Files>
+      <File FileName="Assets/Scripts/MuzzleyManager.cs" Line="357" Column="47" />
+      <File FileName="Assets/Scripts/BumperCarMuzzley.cs" Line="33" Column="5" />
+      <File FileName="Assets/Scripts/BumperCarBase.cs" Line="69" Column="4" />
+      <File FileName="Assets/Scripts/BumperCarIA.cs" Line="167" Column="1" />
+      <File FileName="Assets/Scripts/BumperCarsManager.cs" Line="1" Column="1" />
+      <File FileName="Assets/Scripts/UsuarioHudMuzzley.cs" Line="112" Column="1" />
+    </Files>
+    <Pads>
+      <Pad Id="ProjectPad">
+        <State expanded="True">
+          <Node name="Assembly-CSharp" expanded="True">
+            <Node name="Assets" expanded="True">
+              <Node name="Scripts" expanded="True">
+                <Node name="Utilities" expanded="True" />
+                <Node name="UsuarioHudMuzzley.cs" selected="True" />
+              </Node>
+            </Node>
+          </Node>
+        </State>
+      </Pad>
+    </Pads>
+  </MonoDevelop.Ide.Workbench>
+  <MonoDevelop.Ide.DebuggingService.Breakpoints>
+    <BreakpointStore />
+  </MonoDevelop.Ide.DebuggingService.Breakpoints>
+  <MonoDevelop.Ide.DebuggingService.PinnedWatches />
+</Properties>
