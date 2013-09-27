@@ -15,14 +15,15 @@ public class MuzzleyManager : MonoBehaviour {
 	public Dictionary<string, BumperCarMuzzley> participantes;
 	public GameObject arenaRef;
 	public GameObject bumperCarPrefab;
+	public GameObject iaBumperCarPrefab;
 	public GameObject esperandoJogadorPrefab;
 	public GameObject esperandoJogadorObj;
 	public GameObject contagemRegressivaPrefab;
 	public GameObject contagemRegressivaObj;
 	public GameObject placarPrefab;
 	public GameObject placarObj;
-	public GameObject iaPrefab;
-	public GameObject iaObj;
+	public GameObject moedasPrefab;
+	public GameObject moedasObj;
 	string idNovoCarro;
 	string nomeDoUsuario;
 	string fotoUrl;
@@ -30,11 +31,13 @@ public class MuzzleyManager : MonoBehaviour {
 	bool showQr;
 	public Bounds actionView;
 	public List<Vector3> posicoesIniciais;
+	public List<GameObject> iaBumperCars;
 	public CameraFollow cameraFollow;
 	public Transform visaoDeAcao;
 	public GameObject guiaDaCamera;
 	public Dictionary<string, object> motion;
 	public Dictionary<string, object> motionParams;
+	public int jogadoresMax = 5;
 	public float tempoDeEspera = 31;
 	public float tempoDeJogo = 61;
 	public float contagemRegressiva = 4;
@@ -82,7 +85,7 @@ public class MuzzleyManager : MonoBehaviour {
 		showQr = false;
 		actionView = new Bounds(gameObject.transform.position, new Vector3(1,1,1));
 		esperandoJogadorObj = (GameObject)Instantiate(esperandoJogadorPrefab);
-		iaObj = (GameObject)Instantiate(iaPrefab);
+		moedasObj = (GameObject)Instantiate(moedasPrefab);
 		CriarPosicoesNaArena();
 		
 //		motion.Add("c", "deviceMotion");
@@ -193,7 +196,8 @@ public class MuzzleyManager : MonoBehaviour {
 			GameObject newCar = (GameObject)Instantiate(bumperCarPrefab);
 			newCar.name = "CarroDo" + nomeDoUsuario;
 			newCar.GetComponent<BumperCarBase>().carenagem.renderer.material.color = c;
-			newCar.GetComponent<BumperCarMuzzley>().posicao = posicoesIniciais[Convert.ToInt32(idNovoCarro)];
+			//newCar.GetComponent<BumperCarMuzzley>().posicao = posicoesIniciais[Convert.ToInt32(idNovoCarro)];
+			newCar.GetComponent<BumperCarMuzzley>().posicao = posicoesIniciais[participantes.Count];
 			newCar.GetComponent<BumperCarMuzzley>().ResetarPosicao();
 			participantes.Add(idNovoCarro, newCar.GetComponent<BumperCarMuzzley>());
 			InterfaceSalaMuzzley.Instance.posicaoJogador++;
@@ -258,12 +262,13 @@ public class MuzzleyManager : MonoBehaviour {
 			{
 				tempoDeEspera = 31;
 				GameObject.Find("Titulo").guiText.text = "Esperando Jogadores...";
+				//LimparMoedas();
 			}
 			
 			if (tempoDeEspera <= 0)
 			{
 				Destroy(esperandoJogadorObj);
-				Destroy(iaObj);
+				Destroy(moedasObj);
 				contagemRegressivaObj = (GameObject)Instantiate(contagemRegressivaPrefab);
 				fluxo = FLUXO.JOGO;
 				
@@ -275,6 +280,18 @@ public class MuzzleyManager : MonoBehaviour {
 					}
 				}
 				
+				// aqui criamos os jogadores ia
+				int o = jogadoresMax - participantes.Count;
+				if (o > 0)
+				{
+					for (int i = 0; i < o; i++)
+					{
+						GameObject go = (GameObject)Instantiate(iaBumperCarPrefab);
+						go.transform.position = posicoesIniciais[i + participantes.Count];
+						iaBumperCars.Add(go);
+					}
+				}
+				
 				tempoDeEspera = 31;
 			}
 			
@@ -283,10 +300,15 @@ public class MuzzleyManager : MonoBehaviour {
 			if (participantes.Count == 0) {
 				fluxo = FLUXO.ESPERANDO_JOGADORES;
 				esperandoJogadorObj = (GameObject)Instantiate(esperandoJogadorPrefab);
-				iaObj = (GameObject)Instantiate(iaPrefab);
+				moedasObj = (GameObject)Instantiate(moedasPrefab);
 				Destroy(contagemRegressivaObj);
 				tempoDeJogo = 61;
 				jogoIniciado = false;
+				//aqui limpamos a lista de jogadores e excluimos eles
+				foreach (GameObject item in iaBumperCars) {
+					Destroy(item.gameObject);
+				}
+				iaBumperCars.Clear();
 			}
 			
 			if (!jogoIniciado)
@@ -320,6 +342,8 @@ public class MuzzleyManager : MonoBehaviour {
 					placarObj = (GameObject)Instantiate(placarPrefab);
 					jogoIniciado = false;
 					
+					//LimparMoedas();
+					
 					if (participantes.Count >= 1)
 					{
 						GameObject.Find("Foto1").guiTexture.texture = InterfaceSalaMuzzley.Instance.huds[0].GetComponent<UsuarioHudMuzzley>().foto.guiTexture.texture;
@@ -343,6 +367,12 @@ public class MuzzleyManager : MonoBehaviour {
 						}
 					}
 					
+					//aqui limpamos a lista de jogadores e excluimos eles
+					foreach (GameObject item in iaBumperCars) {
+						Destroy(item.gameObject);
+					}
+					iaBumperCars.Clear();
+					
 					foreach (KeyValuePair<string, BumperCarMuzzley> item in participantes)
 					{
 						item.Value.gameObject.SetActive(false);
@@ -354,7 +384,7 @@ public class MuzzleyManager : MonoBehaviour {
 			if (participantes.Count == 0) {
 				fluxo = FLUXO.ESPERANDO_JOGADORES;
 				esperandoJogadorObj = (GameObject)Instantiate(esperandoJogadorPrefab);
-				iaObj = (GameObject)Instantiate(iaPrefab);
+				moedasObj = (GameObject)Instantiate(moedasPrefab);
 				Destroy(placarObj);
 				tempoDeJogo = 61;
 				InterfaceSalaMuzzley.Instance.tempo.text = /*"ID: " + */activityId + "\n" + /*"Tempo: " + */((int)tempoDeJogo).ToString();
@@ -376,6 +406,18 @@ public class MuzzleyManager : MonoBehaviour {
 		fluxo = FLUXO.JOGO;
 		jogarNovamente = false;
 		
+		// aqui criamos os jogadores ia
+		int o = jogadoresMax - participantes.Count;
+		if (o > 0)
+		{
+			for (int i = 0; i < o; i++)
+			{
+				GameObject go = (GameObject)Instantiate(iaBumperCarPrefab);
+				go.transform.position = posicoesIniciais[i + participantes.Count];
+				iaBumperCars.Add(go);
+			}
+		}
+		
 		foreach (KeyValuePair<string, BumperCarMuzzley> item in participantes)
 		{
 			item.Value.gameObject.SetActive(true);
@@ -387,6 +429,14 @@ public class MuzzleyManager : MonoBehaviour {
 			{
 				item.Value.ResetarPosicao();
 			}
+		}
+	}
+	
+	public void LimparMoedas()
+	{
+		while (GameObject.Find("Coin(Clone)"))
+		{
+			Destroy(GameObject.Find("Coin(Clone)"));
 		}
 	}
 	

@@ -45,23 +45,26 @@ public class BumperCarIA : BumperCarBase
 	
 	void Update ()
 	{
-		switch (state)
+		if (MuzzleyManager.Instance.fluxo == MuzzleyManager.FLUXO.JOGO && MuzzleyManager.Instance.jogoIniciado)
 		{
-		case BUMPERCAR_IA.CHASING:
-			Chasing(0);
-			break;
-		case BUMPERCAR_IA.RUNNING:
-			break;
-		case BUMPERCAR_IA.COLLECTING:
-			Collect(0);
-			break;
-		}
-		
-		timeToChangeState += Time.deltaTime;
-		
-		if (timeToChangeState >= 8)
-		{
-			ChangeState();
+			switch (state)
+			{
+			case BUMPERCAR_IA.CHASING:
+				Chasing(0);
+				break;
+			case BUMPERCAR_IA.RUNNING:
+				break;
+			case BUMPERCAR_IA.COLLECTING:
+				Collect(0);
+				break;
+			}
+			
+			timeToChangeState += Time.deltaTime;
+			
+			if (timeToChangeState >= 8)
+			{
+				ChangeState();
+			}
 		}
 	}
 	

@@ -47,11 +47,11 @@ public class BumperCarMuzzley : BumperCarBase {
 		{
 			//print("state: " + state + " value: " + j + " rotacao: " + rotacao);
 			
-			if (j == "180")// || j == "135" || j == "225")
+			if (j == "180" || j == "135" || j == "225")
 			{
 				rotacao = -1;
 			}
-			if (j == "0")// || j == "45" || j == "315")
+			if (j == "0" || j == "45" || j == "315")
 			{
 				rotacao = 1;
 			}
