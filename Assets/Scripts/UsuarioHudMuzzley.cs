@@ -98,9 +98,10 @@ public class UsuarioHudMuzzley : MonoBehaviour
 	
 	void UpdateCoins()
 	{
-		if (id != null && coinsTxt != null && MuzzleyManager.Instance.fluxo != MuzzleyManager.FLUXO.PLACAR && MuzzleyManager.Instance.participantes[id].gameObject.GetComponentInChildren<CollidersManager>())
+		if (id != null && coinsTxt != null && MuzzleyManager.Instance.fluxo != MuzzleyManager.FLUXO.PLACAR && MuzzleyManager.Instance.participantes[id] != null && MuzzleyManager.Instance.participantes[id].gameObject.GetComponentInChildren<CollidersManager>())
 		{
-			coins = MuzzleyManager.Instance.participantes[id].gameObject.GetComponentInChildren<CollidersManager>().coins;
+			if (MuzzleyManager.Instance.participantes[id] != null)
+				coins = MuzzleyManager.Instance.participantes[id].gameObject.GetComponentInChildren<CollidersManager>().coins;
 			coinsTxt.guiText.text = "Modeas: " + coins.ToString();
 		}
 	}

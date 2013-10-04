@@ -22,7 +22,7 @@ public class BumperCarIA : BumperCarBase
 		rigidbody.centerOfMass = new Vector3(0, 0, 0.5f);
 		distanceChasing = 1000;
 		life = 100;
-		coins = 100;
+		coins = 20;
 		colidindo = false;
 		StartCar();
 		ChooseNearestTarget();
