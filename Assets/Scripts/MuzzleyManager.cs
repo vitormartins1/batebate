@@ -32,12 +32,13 @@ public class MuzzleyManager : MonoBehaviour {
 	public Bounds actionView;
 	public List<Vector3> posicoesIniciais;
 	public List<GameObject> iaBumperCars;
+	public List<GameObject> coins;
 	public CameraFollow cameraFollow;
 	public Transform visaoDeAcao;
 	public GameObject guiaDaCamera;
 	public Dictionary<string, object> motion;
 	public Dictionary<string, object> motionParams;
-	public int jogadoresMax = 5;
+	public int jogadoresMax;
 	public float tempoDeEspera = 31;
 	public float tempoDeJogo = 61;
 	public float contagemRegressiva = 4;
@@ -87,6 +88,7 @@ public class MuzzleyManager : MonoBehaviour {
 		actionView = new Bounds(gameObject.transform.position, new Vector3(1,1,1));
 		esperandoJogadorObj = (GameObject)Instantiate(esperandoJogadorPrefab);
 		moedasObj = (GameObject)Instantiate(moedasPrefab);
+		jogadoresMax = 6;
 		CriarPosicoesNaArena();
 		
 //		motion.Add("c", "deviceMotion");
@@ -207,6 +209,37 @@ public class MuzzleyManager : MonoBehaviour {
 		InterfaceSalaMuzzley.Instance.tempo.text = activityId;
         //renderer.material.mainTexture = www.texture;
 	}
+
+	public void CriarCarrosIA ()
+	{
+		// aqui criamos os jogadores ia
+		int o = jogadoresMax - participantes.Count;
+		if (o > 0)
+		{
+			for (int i = 0; i < o; i++)
+			{
+				GameObject go = (GameObject)Instantiate(iaBumperCarPrefab);
+				go.transform.position = posicoesIniciais[i + participantes.Count];
+				iaBumperCars.Add(go);
+			}
+		}
+	}
+
+	public void DestruirCarrosParticipantes ()
+	{
+		// aqui destruimos os carros dos participantes
+		foreach (KeyValuePair<string, BumperCarMuzzley> item in participantes)
+			Destroy(item.Value.gameObject);
+	}
+
+	public void DestruirCarrosIA ()
+	{
+		//aqui limpamos a lista de jogadores ia e excluimos eles
+		foreach (GameObject item in iaBumperCars) {
+			Destroy(item.gameObject);
+		}
+		iaBumperCars.Clear();
+	}
 	
 	public void EstadosDeJogo()
 	{
@@ -222,7 +255,7 @@ public class MuzzleyManager : MonoBehaviour {
 			{
 				tempoDeEspera = 31;
 				GameObject.Find("Titulo").guiText.text = "Esperando Jogadores...";
-				//LimparMoedas();
+				LimparMoedas();
 			}
 			
 			if (tempoDeEspera <= 0)
@@ -233,61 +266,13 @@ public class MuzzleyManager : MonoBehaviour {
 				fluxo = FLUXO.JOGO;
 				
 				if (participantes.Count > 0)
-				{
-					// resetamos a posicao dos jogadores
-					foreach (KeyValuePair<string, BumperCarMuzzley> item in participantes)
-					{
-						item.Value.ResetarPosicao();
-					}
-					
-					// aqui destruimos os carros dos participantes
-//					foreach (KeyValuePair<string, BumperCarMuzzley> item in participantes)
-//					{
-//						Destroy(item.Value.gameObject);
-//					}
-//					
-//					// recriamos aqui os carros destruidos
-//					foreach (KeyValuePair<string, BumperCarMuzzley> item in participantes)
-//					{
-//						GameObject newCar = (GameObject)Instantiate(bumperCarPrefab);
-//						//newCar.name = "CarroDo" + InterfaceSalaMuzzley.Instance.huds[Convert.ToInt32(item.Key)].GetComponent<UsuarioHudMuzzley>().nome.guiText.text;
-//						//newCar.GetComponent<BumperCarBase>().carenagem.renderer.material.color = InterfaceSalaMuzzley.Instance.huds[Convert.ToInt32(item.Key)].GetComponent<UsuarioHudMuzzley>().cor;
-//						newCar.GetComponent<BumperCarMuzzley>().posicao = posicoesIniciais[Convert.ToInt32(item.Key)];
-//						BumperCarsManager.Instance.bumperCars.Add(newCar);
-//						
-//						for (int i = 0; i < InterfaceSalaMuzzley.Instance.huds.Count; i++)
-//						{
-//							if (InterfaceSalaMuzzley.Instance.huds[i].GetComponent<UsuarioHudMuzzley>().id == item.Key)
-//							{
-//								newCar.name = "CarroDo" + InterfaceSalaMuzzley.Instance.huds[i].GetComponent<UsuarioHudMuzzley>().nome.guiText.text;
-//								newCar.GetComponent<BumperCarBase>().carenagem.renderer.material.color = InterfaceSalaMuzzley.Instance.huds[i].GetComponent<UsuarioHudMuzzley>().cor;
-//							}
-//						}
-//						
-//						participantes[item.Key] = newCar.GetComponent<BumperCarMuzzley>();
-//					}
-//					
-//					if (participantes.Count > 0)
-//					{
-//						foreach (KeyValuePair<string, BumperCarMuzzley> item in participantes)
-//						{
-//							item.Value.ResetarPosicao();
-//						}
-//					}
+				{	
+					DestruirCarrosParticipantes ();
+					RecriarCarrosDestruidos();
 				}
 				
-				// aqui criamos os jogadores ia
-				int o = jogadoresMax - participantes.Count;
-				if (o > 0)
-				{
-					for (int i = 0; i < o; i++)
-					{
-						GameObject go = (GameObject)Instantiate(iaBumperCarPrefab);
-						go.transform.position = posicoesIniciais[i + participantes.Count];
-						iaBumperCars.Add(go);
-					}
-				}
-				
+				CriarCarrosIA ();
+				LimparMoedas();
 				tempoDeEspera = 31;
 			}
 			
@@ -300,11 +285,8 @@ public class MuzzleyManager : MonoBehaviour {
 				Destroy(contagemRegressivaObj);
 				tempoDeJogo = 61;
 				jogoIniciado = false;
-				//aqui limpamos a lista de jogadores e excluimos eles
-				foreach (GameObject item in iaBumperCars) {
-					Destroy(item.gameObject);
-				}
-				iaBumperCars.Clear();
+				DestruirCarrosIA ();
+				LimparMoedas();
 			}
 			
 			if (!jogoIniciado)
@@ -338,30 +320,7 @@ public class MuzzleyManager : MonoBehaviour {
 					placarObj = (GameObject)Instantiate(placarPrefab);
 					jogoIniciado = false;
 					
-					//LimparMoedas();
-					
-//					if (participantes.Count >= 1)
-//					{
-//						GameObject.Find("Foto1").guiTexture.texture = InterfaceSalaMuzzley.Instance.huds[0].GetComponent<UsuarioHudMuzzley>().foto.guiTexture.texture;
-//						//GameObject.Find("Nome1").guiText.text = InterfaceSalaMuzzley.Instance.huds[0].GetComponent<UsuarioHudMuzzley>().nome.guiText.text; 
-//						//GameObject.Find("Nome1").guiText.material.color = Color.black;
-//						//GameObject.Find("Nome1").guiText.pixelOffset = new Vector2(GameObject.Find("Foto1").guiTexture.pixelInset.x + GameObject.Find("Foto1").guiTexture.pixelInset.height/2, GameObject.Find("Nome1").guiText.pixelOffset.y);
-//						
-//						if (participantes.Count >= 2)
-//						{
-//							GameObject.Find("Foto2").guiTexture.texture = InterfaceSalaMuzzley.Instance.huds[1].GetComponent<UsuarioHudMuzzley>().foto.guiTexture.texture;
-//							//GameObject.Find("Nome2").guiText.text = InterfaceSalaMuzzley.Instance.huds[1].GetComponent<UsuarioHudMuzzley>().nome.guiText.text;
-//							//GameObject.Find("Nome2").guiText.material.color = Color.black;
-//							//GameObject.Find("Nome2").guiText.pixelOffset = new Vector2(GameObject.Find("Foto2").guiTexture.pixelInset.x + GameObject.Find("Foto2").guiTexture.pixelInset.height/2, GameObject.Find("Nome2").guiText.pixelOffset.y);
-//							
-//							if (participantes.Count >= 3)
-//							{
-//								GameObject.Find("Foto3").guiTexture.texture = InterfaceSalaMuzzley.Instance.huds[2].GetComponent<UsuarioHudMuzzley>().foto.guiTexture.texture;
-//								//GameObject.Find("Nome3").guiText.text = InterfaceSalaMuzzley.Instance.huds[2].GetComponent<UsuarioHudMuzzley>().nome.guiText.text;
-//								//GameObject.Find("Nome3").guiText.material.color = Color.black;
-//							}
-//						}
-//					}
+					LimparMoedas();
 					
 					// atualizamos os jogadores no placar
 					int oioi = 0;
@@ -378,22 +337,11 @@ public class MuzzleyManager : MonoBehaviour {
 						GameObject.Find("Resultado").guiText.text = GameObject.Find("Resultado").guiText.text + "\n" + oioi + " - " + "IA" + " - " + item.GetComponent<BumperCarIA>().coins + " Moedas";
 						Destroy(item.gameObject);
 					}
-					
 					iaBumperCars.Clear();
 					
-					// aqui desativamos os carros dos aprticipantes
-//					foreach (KeyValuePair<string, BumperCarMuzzley> item in participantes)
-//					{
-//						item.Value.gameObject.SetActive(false);
-//					}
+					DestruirCarrosParticipantes();
 					
-					// aqui destruimos os carros dos participantes
-					foreach (KeyValuePair<string, BumperCarMuzzley> item in participantes)
-					{
-						Destroy(item.Value.gameObject);
-					}
-					
-					// aqui limpamos a lista de carros seguidos pela ia
+					//Limpamos a lista de carros seguidos pela ia
 					BumperCarsManager.Instance.bumperCars.Clear();
 					
 					carrosCriados = false;
@@ -426,7 +374,8 @@ public class MuzzleyManager : MonoBehaviour {
 			newCar.name = "CarroDo" + nomeDoUsuario;
 			newCar.GetComponent<BumperCarBase>().carenagem.renderer.material.color = c;
 			//newCar.GetComponent<BumperCarMuzzley>().posicao = posicoesIniciais[Convert.ToInt32(idNovoCarro)];
-			newCar.GetComponent<BumperCarMuzzley>().posicao = posicoesIniciais[participantes.Count];
+			newCar.GetComponent<BumperCarMuzzley>().indexPosicaoInicial = participantes.Count;
+			newCar.GetComponent<BumperCarMuzzley>().posicao = posicoesIniciais[newCar.GetComponent<BumperCarMuzzley>().indexPosicaoInicial];
 			newCar.GetComponent<BumperCarMuzzley>().ResetarPosicao();
 			participantes.Add(idNovoCarro, newCar.GetComponent<BumperCarMuzzley>());
 			InterfaceSalaMuzzley.Instance.posicaoJogador++;
@@ -458,53 +407,30 @@ public class MuzzleyManager : MonoBehaviour {
 			break;
 		}
 	}
-	
-	public void JogarNovamente()
+
+	public void RecriarCarrosDestruidos ()
 	{
-		Destroy(placarObj);
-		tempoDeJogo = 61;
-		InterfaceSalaMuzzley.Instance.tempo.text = /*"ID: " + */activityId + "\n" + /*"Tempo: " + */((int)tempoDeJogo).ToString();
-		contagemRegressivaObj = (GameObject)Instantiate(contagemRegressivaPrefab);
-		fluxo = FLUXO.JOGO;
-		jogarNovamente = false;
-		
-		// aqui criamos os jogadores ia
-		int o = jogadoresMax - participantes.Count;
-		if (o > 0)
-		{
-			for (int i = 0; i < o; i++)
-			{
-				GameObject go = (GameObject)Instantiate(iaBumperCarPrefab);
-				go.transform.position = posicoesIniciais[i + participantes.Count];
-				iaBumperCars.Add(go);
-			}
-		}
-		
-		//reativamos aqui os carros dos jogadores
-//		foreach (KeyValuePair<string, BumperCarMuzzley> item in participantes)
-//		{
-//			item.Value.gameObject.SetActive(true);
-//		}
-		
-		// recriamos aqui os carros destruidos
-		foreach (KeyValuePair<string, BumperCarMuzzley> item in participantes)
+		// recriamos aqui os carros dos participantes destruidos
+		int temp = 0;
+		var buffer = new List<string>(participantes.Keys);
+		foreach (string key in buffer)
 		{
 			GameObject newCar = (GameObject)Instantiate(bumperCarPrefab);
-			//newCar.name = "CarroDo" + InterfaceSalaMuzzley.Instance.huds[Convert.ToInt32(item.Key)].GetComponent<UsuarioHudMuzzley>().nome.guiText.text;
-			//newCar.GetComponent<BumperCarBase>().carenagem.renderer.material.color = InterfaceSalaMuzzley.Instance.huds[Convert.ToInt32(item.Key)].GetComponent<UsuarioHudMuzzley>().cor;
-			newCar.GetComponent<BumperCarMuzzley>().posicao = posicoesIniciais[Convert.ToInt32(item.Key)];
+			//newCar.GetComponent<BumperCarMuzzley>().posicao = posicoesIniciais[Convert.ToInt32(key)];
+			newCar.GetComponent<BumperCarMuzzley>().posicao = posicoesIniciais[temp];
 			BumperCarsManager.Instance.bumperCars.Add(newCar);
+			temp++;
 			
 			for (int i = 0; i < InterfaceSalaMuzzley.Instance.huds.Count; i++)
 			{
-				if (InterfaceSalaMuzzley.Instance.huds[i].GetComponent<UsuarioHudMuzzley>().id == item.Key)
+				if (InterfaceSalaMuzzley.Instance.huds[i].GetComponent<UsuarioHudMuzzley>().id == key)
 				{
 					newCar.name = "CarroDo" + InterfaceSalaMuzzley.Instance.huds[i].GetComponent<UsuarioHudMuzzley>().nome.guiText.text;
 					newCar.GetComponent<BumperCarBase>().carenagem.renderer.material.color = InterfaceSalaMuzzley.Instance.huds[i].GetComponent<UsuarioHudMuzzley>().cor;
 				}
 			}
 			
-			participantes[item.Key] = newCar.GetComponent<BumperCarMuzzley>();
+			participantes[key] = newCar.GetComponent<BumperCarMuzzley>();
 		}
 		
 		if (participantes.Count > 0)
@@ -516,13 +442,27 @@ public class MuzzleyManager : MonoBehaviour {
 		}
 	}
 	
+	public void JogarNovamente()
+	{
+		Destroy(placarObj);
+		tempoDeJogo = 61;
+		InterfaceSalaMuzzley.Instance.tempo.text = /*"ID: " + */activityId + "\n" + /*"Tempo: " + */((int)tempoDeJogo).ToString();
+		contagemRegressivaObj = (GameObject)Instantiate(contagemRegressivaPrefab);
+		fluxo = FLUXO.JOGO;
+		jogarNovamente = false;
+		
+		CriarCarrosIA();
+		RecriarCarrosDestruidos ();
+	}
+	
 	public void LimparMoedas()
 	{
-		while (GameObject.Find("Coin(Clone)"))
+		for (int i = 0; i < coins.Count; i++)
 		{
-			Destroy(GameObject.Find("Coin(Clone)"));
+			Destroy(coins[i]);
 		}
 		
+		coins.Clear();
 	}
 	
 	public enum STATE

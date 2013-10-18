@@ -44,6 +44,7 @@ public class CollidersManager : MonoBehaviour {
 				GameObject go = (GameObject)Instantiate(coinPrefab, new Vector3(transform.position.x + Random.Range(-3, 3), transform.position.y + 3, transform.position.z + Random.Range(-3, 3)), Quaternion.identity);
 				go.GetComponent<Rigidbody>().AddExplosionForce(6, go.transform.position, 100, 10, ForceMode.Impulse);	
 				//go.GetComponent<Rigidbody>().AddForce(Vector3.up * 10, ForceMode.Force);
+				MuzzleyManager.Instance.coins.Add(go);
 				UpdateText();
 			}
 			

@@ -12,6 +12,8 @@ public class BumperCarBase : MonoBehaviour
 	public float[] GearRatio;
 	public int CurrentGear = 0;
 	public int AppropriateGear;
+	
+	public int indexPosicaoInicial;
 
 	// These variables are just for applying torque to the wheels and shifting gears.
 	// using the defined Max and Min Engine RPM, the script can determine what gear the
