@@ -15,7 +15,7 @@ public class ResizeGUITexture : MonoBehaviour
     public void StartResize()
     {
 
-        resolucaoInicial = new Vector2(1024, 768);
+		resolucaoInicial = new Vector2(Screen.width, Screen.height);
 		//resolucaoInicial = new Vector2(Screen.currentResolution.width, Screen.currentResolution.height);
 		
         if (resolucaoInicial.x != Screen.width || resolucaoInicial.y != Screen.height)

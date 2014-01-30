@@ -28,6 +28,7 @@ public class MuzzleyManager : MonoBehaviour {
 	string nomeDoUsuario;
 	string fotoUrl;
 	public GUITexture qrcodeGuiTexture;
+	public GUITexture qrcodeGuiTexture2;
 	bool showQr;
 	public Bounds actionView;
 	public List<Vector3> posicoesIniciais;
@@ -87,6 +88,7 @@ public class MuzzleyManager : MonoBehaviour {
 		showQr = false;
 		actionView = new Bounds(gameObject.transform.position, new Vector3(1,1,1));
 		esperandoJogadorObj = (GameObject)Instantiate(esperandoJogadorPrefab);
+		qrcodeGuiTexture2.enabled = true;
 		moedasObj = (GameObject)Instantiate(moedasPrefab);
 		jogadoresMax = 6;
 		CriarPosicoesNaArena();
@@ -205,6 +207,7 @@ public class MuzzleyManager : MonoBehaviour {
 		WWW www = new WWW(qrcodeUrl);
         yield return www;
 		qrcodeGuiTexture.texture = www.texture;
+		qrcodeGuiTexture2.texture = www.texture;
 		showQr = false;
 		InterfaceSalaMuzzley.Instance.tempo.text = activityId;
         //renderer.material.mainTexture = www.texture;
@@ -249,12 +252,12 @@ public class MuzzleyManager : MonoBehaviour {
 			if (participantes.Count > 0)
 			{
 				tempoDeEspera -= Time.deltaTime;
-				GameObject.Find("Titulo").guiText.text = "Esperando mais jogadores...  " + ((int)tempoDeEspera).ToString();
+				GameObject.Find("Titulo2").guiText.text = "Esperando mais jogadores...  " + ((int)tempoDeEspera).ToString();
 			}
 			else
 			{
 				tempoDeEspera = 31;
-				GameObject.Find("Titulo").guiText.text = "Esperando Jogadores...";
+				GameObject.Find("Titulo2").guiText.text = "Venha jogar!";
 				LimparMoedas();
 			}
 			
@@ -264,7 +267,9 @@ public class MuzzleyManager : MonoBehaviour {
 				Destroy(moedasObj);
 				contagemRegressivaObj = (GameObject)Instantiate(contagemRegressivaPrefab);
 				fluxo = FLUXO.JOGO;
-				
+
+				qrcodeGuiTexture2.enabled = false;
+
 				if (participantes.Count > 0)
 				{	
 					DestruirCarrosParticipantes ();
@@ -281,6 +286,7 @@ public class MuzzleyManager : MonoBehaviour {
 			if (participantes.Count == 0) {
 				fluxo = FLUXO.ESPERANDO_JOGADORES;
 				esperandoJogadorObj = (GameObject)Instantiate(esperandoJogadorPrefab);
+				qrcodeGuiTexture2.enabled = true;
 				moedasObj = (GameObject)Instantiate(moedasPrefab);
 				Destroy(contagemRegressivaObj);
 				tempoDeJogo = 61;
@@ -352,6 +358,7 @@ public class MuzzleyManager : MonoBehaviour {
 			if (participantes.Count == 0) {
 				fluxo = FLUXO.ESPERANDO_JOGADORES;
 				esperandoJogadorObj = (GameObject)Instantiate(esperandoJogadorPrefab);
+				qrcodeGuiTexture2.enabled = true;
 				moedasObj = (GameObject)Instantiate(moedasPrefab);
 				Destroy(placarObj);
 				tempoDeJogo = 61;
