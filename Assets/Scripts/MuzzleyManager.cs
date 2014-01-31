@@ -348,7 +348,9 @@ public class MuzzleyManager : MonoBehaviour {
 							Destroy(item.gameObject);
 						}
 						iaBumperCars.Clear();
-												
+
+						DestruirCarrosParticipantes();
+					
 						//Limpamos a lista de carros seguidos pela ia
 						BumperCarsManager.Instance.bumperCars.Clear();
 						
@@ -399,10 +401,13 @@ public class MuzzleyManager : MonoBehaviour {
 			state = STATE.NENHUM_JOGADOR_ENTROU;
 			if (idCarroSaiu != null)
 			{
-				BumperCarsManager.Instance.bumperCars.Remove(participantes[idCarroSaiu].gameObject);
-				Destroy(participantes[idCarroSaiu].gameObject);
+				if(participantes[idCarroSaiu] != null){
+					BumperCarsManager.Instance.bumperCars.Remove(participantes[idCarroSaiu].gameObject);
+					Destroy(participantes[idCarroSaiu].gameObject);
+				}
 				participantes.Remove(idCarroSaiu);
 
+				
 				foreach (GameObject item in InterfaceSalaMuzzley.Instance.huds) {
 					Debug.Log(item);
 					if (item.GetComponent<UsuarioHudMuzzley>().id == idCarroSaiu)
@@ -455,7 +460,6 @@ public class MuzzleyManager : MonoBehaviour {
 	
 	public void JogarNovamente()
 	{
-		DestruirCarrosParticipantes();
 		Destroy(placarObj);
 		tempoDeJogo = TEMPO_JOGO;
 		InterfaceSalaMuzzley.Instance.tempo.text = /*"ID: " + */activityId + "\n" + /*"Tempo: " + */((int)tempoDeJogo).ToString();
