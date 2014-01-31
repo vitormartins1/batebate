@@ -2,10 +2,11 @@
 -target:library
 -nowarn:0169
 -out:'Temp/Assembly-CSharp.dll'
--r:'/Applications/Unity/Unity.app/Contents/PlaybackEngines/MacStandalonePlayer/Managed/UnityEngine.dll'
+-r:'/Applications/Unity/Unity.app/Contents/Frameworks/Managed/UnityEngine.dll'
 -r:'Assets/Libs/Muzzley.Net.dll'
 -r:'Assets/Libs/Newtonsoft.Json.dll'
 -r:'Assets/Libs/WebSocket4Net.dll'
+-r:'/Applications/Unity/Unity.app/Contents/Frameworks/Managed/UnityEditor.dll'
 -define:UNITY_STANDALONE_OSX
 -define:ENABLE_MICROPHONE
 -define:ENABLE_TEXTUREID_MAP
@@ -33,8 +34,11 @@
 -define:ENABLE_NAVMESH_CARVING
 -define:ENABLE_DUCK_TYPING
 -define:ENABLE_SINGLE_INSTANCE_BUILD_SETTING
--define:UNITY_4_3_2
+-define:UNITY_4_3_3
 -define:UNITY_4_3
+-define:ENABLE_PROFILER
+-define:UNITY_EDITOR
+-define:UNITY_EDITOR_OSX
 'Assets/Scripts/Antiroll_Bar.cs'
 'Assets/Scripts/BumperCar.cs'
 'Assets/Scripts/BumperCar1.cs'

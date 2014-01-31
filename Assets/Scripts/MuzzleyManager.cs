@@ -25,6 +25,7 @@ public class MuzzleyManager : MonoBehaviour {
 	public GameObject moedasPrefab;
 	public GameObject moedasObj;
 	string idNovoCarro;
+	string idCarroSaiu;
 	string nomeDoUsuario;
 	string fotoUrl;
 	public GUITexture qrcodeGuiTexture;
@@ -40,13 +41,16 @@ public class MuzzleyManager : MonoBehaviour {
 	public Dictionary<string, object> motion;
 	public Dictionary<string, object> motionParams;
 	public int jogadoresMax;
-	public float tempoDeEspera = 31;
-	public float tempoDeJogo = 61;
+	public const float TEMPO_ESPERA = 25;
+	public float tempoDeEspera = TEMPO_ESPERA;
+	public const float TEMPO_JOGO = 60;
+	public float tempoDeJogo = TEMPO_JOGO;
 	public float contagemRegressiva = 4;
 	public bool jogoIniciado = false;
 	public bool jogarNovamente = false;
 	public bool carrosCriados = true;
-	
+
+
 	private static MuzzleyManager instance;
 
     public static MuzzleyManager Instance
@@ -164,7 +168,7 @@ public class MuzzleyManager : MonoBehaviour {
 	
 	private void OnQuit(MuzzleyAppParticipant muzzley_participant)
 	{
-		idNovoCarro = muzzley_participant.Id;
+		idCarroSaiu = muzzley_participant.Id;
 		state = STATE.JOGADOR_SAIU;
 	}
 	
@@ -248,127 +252,126 @@ public class MuzzleyManager : MonoBehaviour {
 	{
 		switch (fluxo) {
 			case FLUXO.ESPERANDO_JOGADORES:
-			
-			if (participantes.Count > 0)
-			{
-				tempoDeEspera -= Time.deltaTime;
-				GameObject.Find("Titulo2").guiText.text = "Esperando mais jogadores...  " + ((int)tempoDeEspera).ToString();
-			}
-			else
-			{
-				tempoDeEspera = 31;
-				GameObject.Find("Titulo2").guiText.text = "Venha jogar!";
-				LimparMoedas();
-			}
-			
-			if (tempoDeEspera <= 0)
-			{
-				Destroy(esperandoJogadorObj);
-				Destroy(moedasObj);
-				contagemRegressivaObj = (GameObject)Instantiate(contagemRegressivaPrefab);
-				fluxo = FLUXO.JOGO;
-
-				qrcodeGuiTexture2.enabled = false;
-
 				if (participantes.Count > 0)
-				{	
-					DestruirCarrosParticipantes ();
-					RecriarCarrosDestruidos();
-				}
-				
-				CriarCarrosIA ();
-				LimparMoedas();
-				tempoDeEspera = 31;
-			}
-			
-		break;
-			case FLUXO.JOGO:
-			if (participantes.Count == 0) {
-				fluxo = FLUXO.ESPERANDO_JOGADORES;
-				esperandoJogadorObj = (GameObject)Instantiate(esperandoJogadorPrefab);
-				qrcodeGuiTexture2.enabled = true;
-				moedasObj = (GameObject)Instantiate(moedasPrefab);
-				Destroy(contagemRegressivaObj);
-				tempoDeJogo = 61;
-				jogoIniciado = false;
-				DestruirCarrosIA ();
-				LimparMoedas();
-			}
-			
-			if (!jogoIniciado)
-			{
-				if (((int)contagemRegressiva) <= 0)
 				{
-					contagemRegressivaObj.guiText.text = "Vai!";
-					if (((int)contagemRegressiva) <= -1)
-					{
-						jogoIniciado = true;
-						Destroy(contagemRegressivaObj);
-						contagemRegressiva = 4;
-					}
+					tempoDeEspera -= Time.deltaTime;
+					GameObject.Find("Titulo2").guiText.text = "Esperando mais jogadores...  " + ((int)tempoDeEspera).ToString();
 				}
-				else if (contagemRegressivaObj != null)
+				else
 				{
-					contagemRegressivaObj.guiText.text = ((int)contagemRegressiva).ToString();
-				}
-				
-				contagemRegressiva -= Time.deltaTime;
-			}
-			
-			if (jogoIniciado)
-			{
-				tempoDeJogo -= Time.deltaTime;
-				InterfaceSalaMuzzley.Instance.tempo.text = /*"ID: " + */activityId + "\n" + /*"Tempo: " + */((int)tempoDeJogo).ToString();
-				
-				if (tempoDeJogo <= 0)
-				{
-					fluxo = FLUXO.PLACAR;
-					placarObj = (GameObject)Instantiate(placarPrefab);
-					jogoIniciado = false;
-					
+					tempoDeEspera = TEMPO_ESPERA;
+					GameObject.Find("Titulo2").guiText.text = "Venha jogar!";
 					LimparMoedas();
-					
-					// atualizamos os jogadores no placar
-					int oioi = 0;
-					foreach (KeyValuePair<string, BumperCarMuzzley> item in participantes)
-					{
-						oioi++;
-						GameObject.Find("Resultado").guiText.text = GameObject.Find("Resultado").guiText.text + "\n" + oioi + " - " + InterfaceSalaMuzzley.Instance.huds[oioi-1].GetComponent<UsuarioHudMuzzley>().nome.guiText.text + " - " + InterfaceSalaMuzzley.Instance.huds[oioi-1].GetComponent<UsuarioHudMuzzley>().coins + " Moedas";
-					}
-					
-					//aqui limpamos a lista de jogadores com ia, excluimos eles e atualizams eles no placar
-					foreach (GameObject item in iaBumperCars)
-					{
-						oioi++;
-						GameObject.Find("Resultado").guiText.text = GameObject.Find("Resultado").guiText.text + "\n" + oioi + " - " + "IA" + " - " + item.GetComponent<BumperCarIA>().coins + " Moedas";
-						Destroy(item.gameObject);
-					}
-					iaBumperCars.Clear();
-					
-					DestruirCarrosParticipantes();
-					
-					//Limpamos a lista de carros seguidos pela ia
-					BumperCarsManager.Instance.bumperCars.Clear();
-					
-					carrosCriados = false;
 				}
-			}
-		break;
+				
+				if (tempoDeEspera <= 0)
+				{
+					Destroy(esperandoJogadorObj);
+					Destroy(moedasObj);
+					contagemRegressivaObj = (GameObject)Instantiate(contagemRegressivaPrefab);
+					fluxo = FLUXO.JOGO;
+
+					qrcodeGuiTexture2.enabled = false;
+
+					if (participantes.Count > 0)
+					{	
+						DestruirCarrosParticipantes ();
+						RecriarCarrosDestruidos();
+					}
+					
+					CriarCarrosIA ();
+					LimparMoedas();
+					tempoDeEspera = TEMPO_ESPERA;
+				}
+				
+				break;
+			case FLUXO.JOGO:
+				if (participantes.Count == 0) {
+					fluxo = FLUXO.ESPERANDO_JOGADORES;
+					esperandoJogadorObj = (GameObject)Instantiate(esperandoJogadorPrefab);
+					qrcodeGuiTexture2.enabled = true;
+					moedasObj = (GameObject)Instantiate(moedasPrefab);
+					Destroy(contagemRegressivaObj);
+					tempoDeJogo = TEMPO_JOGO;
+					jogoIniciado = false;
+					DestruirCarrosIA ();
+					LimparMoedas();
+				}
+				
+				if (!jogoIniciado)
+				{
+					if (((int)contagemRegressiva) <= 0)
+					{
+						contagemRegressivaObj.guiText.text = "Vai!";
+						if (((int)contagemRegressiva) <= -1)
+						{
+							jogoIniciado = true;
+							tempoDeJogo = TEMPO_JOGO;
+							Destroy(contagemRegressivaObj);
+							contagemRegressiva = 4;
+						}
+					}
+					else if (contagemRegressivaObj != null)
+					{
+						contagemRegressivaObj.guiText.text = ((int)contagemRegressiva).ToString();
+					}
+					
+					contagemRegressiva -= Time.deltaTime;
+				}
+				
+				if (jogoIniciado)
+				{
+					tempoDeJogo -= Time.deltaTime;
+					InterfaceSalaMuzzley.Instance.tempo.text = /*"ID: " + */activityId + "\n" + /*"Tempo: " + */((int)tempoDeJogo).ToString();
+					
+					if (tempoDeJogo <= 0)
+					{
+						fluxo = FLUXO.PLACAR;
+						placarObj = (GameObject)Instantiate(placarPrefab);
+						jogoIniciado = false;
+						
+						LimparMoedas();
+						
+						// atualizamos os jogadores no placar
+						int oioi = 0;
+						foreach (KeyValuePair<string, BumperCarMuzzley> item in participantes)
+						{
+							oioi++;
+							GameObject.Find("Resultado").guiText.text = GameObject.Find("Resultado").guiText.text + "\n" + oioi + " - " + InterfaceSalaMuzzley.Instance.huds[oioi-1].GetComponent<UsuarioHudMuzzley>().nome.guiText.text + " - " + InterfaceSalaMuzzley.Instance.huds[oioi-1].GetComponent<UsuarioHudMuzzley>().coins + " Moedas";
+						}
+						
+						//aqui limpamos a lista de jogadores com ia, excluimos eles e atualizams eles no placar
+						foreach (GameObject item in iaBumperCars)
+						{
+							oioi++;
+							GameObject.Find("Resultado").guiText.text = GameObject.Find("Resultado").guiText.text + "\n" + oioi + " - " + "IA" + " - " + item.GetComponent<BumperCarIA>().coins + " Moedas";
+							Destroy(item.gameObject);
+						}
+						iaBumperCars.Clear();
+												
+						//Limpamos a lista de carros seguidos pela ia
+						BumperCarsManager.Instance.bumperCars.Clear();
+						
+						carrosCriados = false;
+					}
+				}
+				break;
 			case FLUXO.PLACAR:
-			if (participantes.Count == 0) {
-				fluxo = FLUXO.ESPERANDO_JOGADORES;
-				esperandoJogadorObj = (GameObject)Instantiate(esperandoJogadorPrefab);
-				qrcodeGuiTexture2.enabled = true;
-				moedasObj = (GameObject)Instantiate(moedasPrefab);
-				Destroy(placarObj);
-				tempoDeJogo = 61;
-				InterfaceSalaMuzzley.Instance.tempo.text = /*"ID: " + */activityId + "\n" + /*"Tempo: " + */((int)tempoDeJogo).ToString();
-				jogoIniciado = false;
-			}
-			
-			if (jogarNovamente)
-				JogarNovamente();
-		break;
+				if (participantes.Count == 0) {
+					fluxo = FLUXO.ESPERANDO_JOGADORES;
+					esperandoJogadorObj = (GameObject)Instantiate(esperandoJogadorPrefab);
+					qrcodeGuiTexture2.enabled = true;
+					moedasObj = (GameObject)Instantiate(moedasPrefab);
+					Destroy(placarObj);
+					tempoDeJogo = TEMPO_JOGO;
+					InterfaceSalaMuzzley.Instance.tempo.text = /*"ID: " + */activityId + "\n" + /*"Tempo: " + */((int)tempoDeJogo).ToString();
+					jogoIniciado = false;
+				}
+				
+				if (jogarNovamente){
+					JogarNovamente();
+				}
+				break;
 		}
 	}
 	
@@ -391,16 +394,18 @@ public class MuzzleyManager : MonoBehaviour {
 			idNovoCarro = null;
 			BumperCarsManager.Instance.bumperCars.Add(newCar);
 			state = STATE.NENHUM_JOGADOR_ENTROU;
-		break;
+			break;
 		case STATE.JOGADOR_SAIU:
-			if (idNovoCarro != null)
+			state = STATE.NENHUM_JOGADOR_ENTROU;
+			if (idCarroSaiu != null)
 			{
-				BumperCarsManager.Instance.bumperCars.Remove(participantes[idNovoCarro].gameObject);
-				Destroy(participantes[idNovoCarro].gameObject);
-				participantes.Remove(idNovoCarro);
-				
+				BumperCarsManager.Instance.bumperCars.Remove(participantes[idCarroSaiu].gameObject);
+				Destroy(participantes[idCarroSaiu].gameObject);
+				participantes.Remove(idCarroSaiu);
+
 				foreach (GameObject item in InterfaceSalaMuzzley.Instance.huds) {
-					if (item.GetComponent<UsuarioHudMuzzley>().id == idNovoCarro)
+					Debug.Log(item);
+					if (item.GetComponent<UsuarioHudMuzzley>().id == idCarroSaiu)
 					{
 						item.GetComponent<UsuarioHudMuzzley>().Destruir();
 						InterfaceSalaMuzzley.Instance.huds.Remove(item);
@@ -408,9 +413,8 @@ public class MuzzleyManager : MonoBehaviour {
 					}
 				}
 				
-				idNovoCarro = null;
+				idCarroSaiu = null;
 			}
-			state = STATE.NENHUM_JOGADOR_ENTROU;
 			break;
 		}
 	}
@@ -451,8 +455,9 @@ public class MuzzleyManager : MonoBehaviour {
 	
 	public void JogarNovamente()
 	{
+		DestruirCarrosParticipantes();
 		Destroy(placarObj);
-		tempoDeJogo = 61;
+		tempoDeJogo = TEMPO_JOGO;
 		InterfaceSalaMuzzley.Instance.tempo.text = /*"ID: " + */activityId + "\n" + /*"Tempo: " + */((int)tempoDeJogo).ToString();
 		contagemRegressivaObj = (GameObject)Instantiate(contagemRegressivaPrefab);
 		fluxo = FLUXO.JOGO;
